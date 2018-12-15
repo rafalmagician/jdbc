@@ -57,14 +57,14 @@ public class MyShop {
                     deleteProduct(preparedStatement);
                     break;
                 }
-//                case 4:{
-//                    preparedStatement = connection.prepareStatement(
-//                            "DELETE FROM products "+
-//                                    "WHERE product_id=?"
-//                    );
-//                    updateProduct(preparedStatement);
-//                    break;
-//                }
+                case 4:{
+                    preparedStatement = connection.prepareStatement(
+                            "UPDATE products "+
+                                    "SET catalog_number=?,name=?,description=? WHERE product_id = ?"
+                    );
+                    updateProduct(preparedStatement);
+                    break;
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -92,8 +92,33 @@ public class MyShop {
             e.printStackTrace();
         }
     }
-    //-------------------------------------------------------------------------------------------------------
 
+    //-------------------------------------------------------------------------------------------------------
+    private static void updateProduct(PreparedStatement preparedStatement) {
+        try {
+            System.out.println("Please enter new data: ");
+            System.out.print("catalog_number: ");
+            int catalog_number = reader.nextInt();
+            System.out.print("name: ");
+            String name = reader.next();
+            System.out.print("description: ");
+            String description = reader.next();
+            System.out.println("Please enter product_id: ");
+            System.out.print("product_id: ");
+            int product_id = reader.nextInt();
+
+            preparedStatement.setInt(1,catalog_number);
+            preparedStatement.setString(2,name);
+            preparedStatement.setString(3,description);
+            preparedStatement.setInt(4,product_id);
+
+            int update = preparedStatement.executeUpdate();
+
+            System.out.println(update+" updated products.");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
     private static void deleteProduct(PreparedStatement preparedStatement) {
         try {
             System.out.print("Please enter product_id: ");
