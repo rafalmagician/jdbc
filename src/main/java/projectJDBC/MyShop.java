@@ -34,11 +34,13 @@ public class MyShop {
         PreparedStatement preparedStatement = null;
         try {
             assert connection != null;
+            connection.setAutoCommit(false);
             statement = connection.createStatement();
 
             switch (1){
                 case 1:{
                     showAllProducts(statement);
+                    connection.commit();
                     break;
                 }
                 case 2:{
@@ -47,6 +49,7 @@ public class MyShop {
                                     "(?,?,?,?)"
                     );
                     addOneProduct(preparedStatement);
+                    connection.commit();
                     break;
                 }
                 case 3:{
@@ -55,6 +58,7 @@ public class MyShop {
                                     "WHERE product_id=?"
                     );
                     deleteProduct(preparedStatement);
+                    connection.commit();
                     break;
                 }
                 case 4:{
@@ -63,10 +67,16 @@ public class MyShop {
                                     "SET catalog_number=?,name=?,description=? WHERE product_id = ?"
                     );
                     updateProduct(preparedStatement);
+                    connection.commit();
                     break;
                 }
             }
         } catch (SQLException e) {
+            try {
+                connection.rollback();
+            } catch (SQLException e1) {
+                e1.printStackTrace();
+            }
             e.printStackTrace();
         } finally{
             if(preparedStatement != null){
