@@ -40,7 +40,6 @@ public class MyShop {
             switch (1){
                 case 1:{
                     showAllProducts(statement);
-                    connection.commit();
                     break;
                 }
                 case 2:{
@@ -49,7 +48,6 @@ public class MyShop {
                                     "(?,?,?,?)"
                     );
                     addOneProduct(preparedStatement);
-                    connection.commit();
                     break;
                 }
                 case 3:{
@@ -58,7 +56,6 @@ public class MyShop {
                                     "WHERE product_id=?"
                     );
                     deleteProduct(preparedStatement);
-                    connection.commit();
                     break;
                 }
                 case 4:{
@@ -67,10 +64,10 @@ public class MyShop {
                                     "SET catalog_number=?,name=?,description=? WHERE product_id = ?"
                     );
                     updateProduct(preparedStatement);
-                    connection.commit();
                     break;
                 }
             }
+            connection.commit();
         } catch (SQLException e) {
             try {
                 connection.rollback();
