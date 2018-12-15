@@ -3,11 +3,13 @@ package projectJDBC;
 import com.mysql.jdbc.Driver;
 
 import java.sql.*;
+import java.util.Scanner;
 
 public class MyShop {
     private static final String DB_URL = "jdbc:mysql://localhost/produkty";
     private static final String USER = "newuser";
     private static final String PASS = "brak";
+    private static Scanner reader = new Scanner(System.in);
 
     public static void main(String[] args) {
 
@@ -31,16 +33,38 @@ public class MyShop {
         Statement statement = null;
         PreparedStatement preparedStatement = null;
         try {
+            assert connection != null;
             statement = connection.createStatement();
+
             switch (1){
                 case 1:{
                     showAllProducts(statement);
                     break;
                 }
                 case 2:{
-                    addOneProduct(statement);
+                    preparedStatement = connection.prepareStatement(
+                            "INSERT INTO products VALUES"+
+                                    "(?,?,?,?)"
+                    );
+                    addOneProduct(preparedStatement);
                     break;
                 }
+                case 3:{
+                    preparedStatement = connection.prepareStatement(
+                            "DELETE FROM products "+
+                                    "WHERE product_id=?"
+                    );
+                    deleteProduct(preparedStatement);
+                    break;
+                }
+//                case 4:{
+//                    preparedStatement = connection.prepareStatement(
+//                            "DELETE FROM products "+
+//                                    "WHERE product_id=?"
+//                    );
+//                    updateProduct(preparedStatement);
+//                    break;
+//                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -63,21 +87,47 @@ public class MyShop {
 
         //close connection
         try {
-            if(connection != null){
-                connection.close();
-            }
+            connection.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
     //-------------------------------------------------------------------------------------------------------
-    private static void addOneProduct(Statement statement) {
+
+    private static void deleteProduct(PreparedStatement preparedStatement) {
         try {
-            int inserted = statement.executeUpdate(
-                    "INSERT INTO products VALUES "+
-                            "(1,100,'komputer',null)"
-            );
-            System.out.println(inserted+" new products added.");
+            System.out.print("Please enter product_id: ");
+            int product_id = reader.nextInt();
+
+            preparedStatement.setInt(1,product_id);
+
+            preparedStatement.executeUpdate();
+
+            System.out.println(" deleted product.");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    private static void addOneProduct(PreparedStatement preparedStatement) {
+        try {
+            System.out.println("Please enter data: ");
+            System.out.print("product_id: ");
+            int product_id = reader.nextInt();
+            System.out.print("catalog_number: ");
+            int catalog_number = reader.nextInt();
+            System.out.print("name: ");
+            String name = reader.next();
+            System.out.print("description: ");
+            String description = reader.next();
+
+            preparedStatement.setInt(1,product_id);
+            preparedStatement.setInt(2,catalog_number);
+            preparedStatement.setString(3,name);
+            preparedStatement.setString(4,description);
+
+            int update = preparedStatement.executeUpdate();
+
+            System.out.println(update+" new products added.");
         } catch (SQLException e) {
             e.printStackTrace();
         }
