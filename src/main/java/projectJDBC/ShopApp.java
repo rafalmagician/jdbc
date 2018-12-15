@@ -32,16 +32,21 @@ public class ShopApp {
         PreparedStatement preparedStatement = null;
 
         try {
-
-            preparedStatement = connection.prepareStatement(
-                        "UPDATE products "+
-                            "SET description = ? WHERE product_id = ?"
-            );
-            updateProducts(preparedStatement);
+//            preparedStatement = connection.prepareStatement(
+//                        "UPDATE products "+
+//                            "SET description = ? WHERE product_id = ?"
+//            );
+            //updateProducts(preparedStatement);
 
             statement = connection.createStatement();
-            insertProduct(statement);
-            finalAllQuery(statement);
+            switch (1){
+                case 1:{
+                    showAllProducts(statement);
+                    break;
+                }
+            }
+            //insertProduct(statement);
+            //finalAllQuery(statement);
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -72,33 +77,23 @@ public class ShopApp {
         }
 
     }
-
-    private static void updateProducts(PreparedStatement preparedStatement) {
-        try {
-            preparedStatement.setString(1,"bla bla bla");
-            preparedStatement.setInt(2,1);
-
-            int update = preparedStatement.executeUpdate();
-
-            System.out.println(update+" updated products.");
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-    private static void finalAllQuery(Statement statement) {
+//-------------------------------------------------------------------------------------------------------------
+    private static void showAllProducts(Statement statement) {
         ResultSet resultSet = null;
         try {
             resultSet = statement.
-                    executeQuery("SELECT product_id,name,description FROM products");
+                    executeQuery("SELECT product_id,catalog_number,name,description FROM products");
 
             while(resultSet.next()){
                 int product_id = resultSet.getInt("product_id");
+                int catalog_number = resultSet.getInt("catalog_number");
                 String name = resultSet.getString("name");
                 String description = resultSet.getString("description");
 
                 System.out.println(
-                                "Product with id: "+product_id+
-                                " and name: "+name+
+                        "Product with id: "+product_id+
+                                " catalog number: "+catalog_number+
+                                " name: "+name+
                                 " and description: "+description+"."
                 );
             }
@@ -115,6 +110,49 @@ public class ShopApp {
             }
         }
     }
+
+    private static void updateProducts(PreparedStatement preparedStatement) {
+        try {
+            preparedStatement.setString(1,"bla bla bla");
+            preparedStatement.setInt(2,1);
+
+            int update = preparedStatement.executeUpdate();
+
+            System.out.println(update+" updated products.");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+//    private static void finalAllQuery(Statement statement) {
+//        ResultSet resultSet = null;
+//        try {
+//            resultSet = statement.
+//                    executeQuery("SELECT product_id,name,description FROM products");
+//
+//            while(resultSet.next()){
+//                int product_id = resultSet.getInt("product_id");
+//                String name = resultSet.getString("name");
+//                String description = resultSet.getString("description");
+//
+//                System.out.println(
+//                                "Product with id: "+product_id+
+//                                " and name: "+name+
+//                                " and description: "+description+"."
+//                );
+//            }
+//
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        } finally {
+//            if(resultSet != null){
+//                try {
+//                    resultSet.close();
+//                }catch (SQLException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }
+//    }
     private static void insertProduct(Statement statement) {
         try {
             int inserted = statement.executeUpdate(
